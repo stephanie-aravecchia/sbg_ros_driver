@@ -1099,14 +1099,18 @@ const nav_msgs::Odometry MessageWrapper::createRosOdoMessage(const sbg_driver::S
       pose.position.x = m_utm0_.easting;
       pose.position.y = m_utm0_.northing;
       pose.position.z = m_utm0_.altitude;
+      pose.orientation.x = 0;
+      pose.orientation.y = 0;
+      pose.orientation.z = 0;
+      pose.orientation.w = 1;
       fillTransform(m_odom_init_frame_id_, m_odom_frame_id_, pose, transform);
       m_static_tf_broadcaster_.sendTransform(transform);
     }
   }
 
-  LLtoUTM(ref_ekf_nav_msg.latitude, ref_ekf_nav_msg.longitude, m_utm0_.zone, utm_easting, utm_northing);
-  odo_ros_msg.pose.pose.position.x = utm_northing - m_utm0_.easting;
-  odo_ros_msg.pose.pose.position.y = utm_easting  - m_utm0_.northing;
+  LLtoUTM(ref_ekf_nav_msg.latitude, ref_ekf_nav_msg.longitude, m_utm0_.zone, utm_northing, utm_easting);
+  odo_ros_msg.pose.pose.position.x = utm_northing - m_utm0_.northing;
+  odo_ros_msg.pose.pose.position.y = utm_easting  - m_utm0_.easting;
   odo_ros_msg.pose.pose.position.z = ref_ekf_nav_msg.altitude - m_utm0_.altitude;
 
   // Compute convergence angle.
